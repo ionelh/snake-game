@@ -2,6 +2,10 @@
   const canvas = document.querySelector('#snake-canvas'),
         scoreElm = document.querySelector('#score'),
         contentElm = document.querySelector('#content'),
+        upBtn = document.querySelector('#upBtn'),
+        leftBtn = document.querySelector('#leftBtn'),
+        rightBtn = document.querySelector('#rightBtn'),
+        downBtn = document.querySelector('#downBtn'),
         ctx = canvas.getContext('2d'),
         gameW = 20,
         gameH = 20,
@@ -17,7 +21,7 @@
   canvas.height = gameH * cellSide;
   contentElm.style.width = gameW * cellSide + 'px';
 
-  document.addEventListener('click', e => {
+  canvas.addEventListener('click', e => {
     start();
   });
 
@@ -69,4 +73,9 @@
       directions.push(movesMap[e.keyCode]);
     }
   });
+
+  upBtn.addEventListener('mousedown', () => { directions.push('U'); });
+  leftBtn.addEventListener('mousedown', () => { directions.push('L'); });
+  rightBtn.addEventListener('mousedown', () => { directions.push('R'); });
+  downBtn.addEventListener('mousedown', () => { directions.push('D'); });
 })();

@@ -21,3 +21,9 @@ html {
 #snake-canvas {
   margin: 0 auto;
 }
+
+.control {
+  font-size: 48px;
+  padding: 10px 20px;
+  margin: 10px;
+}
