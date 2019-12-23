@@ -8,6 +8,7 @@
         snake = new Snake(gameW, gameH),
         defaultFillStyle = 'black',
         foodFillStyle = 'red',
+        frameRate = 100, // in ms
         cellSide = 20;
   let directions = [],
       intervalID = null;
@@ -54,7 +55,7 @@
   drawCanvas();
 
   function start() {
-    intervalID = setInterval(refresh, 100);
+    intervalID = setInterval(refresh, frameRate);
   }
 
   document.addEventListener('keydown', e => {
