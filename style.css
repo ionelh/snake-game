@@ -1,0 +1,23 @@
+html {
+  font-family: 'Arial';
+}
+
+#snake-canvas {
+  border: 3px solid #000;
+}
+
+#score-label {
+  background-color: #999;
+  padding: 5px;
+  display: inline-block;
+  margin: 10px 0 5px 0;
+}
+
+#content {
+  width: 50%;
+  margin: 0 auto;
+}
+
+#snake-canvas {
+  margin: 0 auto;
+}
