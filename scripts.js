@@ -13,13 +13,13 @@
         defaultFillStyle = 'black',
         foodFillStyle = 'red',
         frameRate = 100, // in ms
-        cellSide = 20;
+        cellSize = 20;
   let directions = [],
       intervalID = null;
 
-  canvas.width = gameW * cellSide;
-  canvas.height = gameH * cellSide;
-  contentElm.style.width = gameW * cellSide + 'px';
+  canvas.width = gameW * cellSize;
+  canvas.height = gameH * cellSize;
+  contentElm.style.width = gameW * cellSize + 'px';
 
   canvas.addEventListener('click', e => {
     start();
@@ -28,35 +28,36 @@
   const drawCell = (pos, fillStyle = defaultFillStyle) => {
     if (!pos) return;
     ctx.fillStyle = fillStyle;
-    ctx.fillRect(pos[1] * cellSide, pos[0] * cellSide, cellSide, cellSide);
+    ctx.fillRect(pos[1] * cellSize, pos[0] * cellSize, cellSize, cellSize);
   };
 
-  const clearCanvas = () => {
-    ctx.clearRect(0, 0, gameW * cellSide, gameH * cellSide);
-  };
-
-  const drawCanvas = () => {
-    snake.position.forEach(cell => {
-      drawCell(cell);
-    });
-
-    drawCell(snake.foodPosition, foodFillStyle);
+  const clearCell = cell => {
+    ctx.clearRect(cell[1] * cellSize, cell[0] * cellSize, cellSize, cellSize);
   };
 
   const refresh = () => {
     if (directions.length > 0) {
       snake.direction = directions.shift();
     }
-    if (snake.move()) {
-      clearCanvas();
-      drawCanvas();
-      scoreElm.innerHTML = snake.score;
+    const prevHead = snake.snakeBody[snake.snakeBody.length - 1];
+    const prevtailTip = snake.snakeBody[0];
+    const move = snake.move();
+    if (move) {
+      if (move.eatenCell) {
+        clearCell(move.eatenCell);
+        scoreElm.innerHTML = move.score;
+      } else {
+        clearCell(prevtailTip);
+      }
+      drawCell(snake.snakeBody[snake.snakeBody.length - 1]);
+      drawCell(snake.foodPosition, foodFillStyle);
     } else {
       clearInterval(intervalID);
     }
   };
 
-  drawCanvas();
+  drawCell(snake.snakeBody[snake.snakeBody.length - 1]);
+  drawCell(snake.foodPosition, foodFillStyle);
 
   function start() {
     intervalID = setInterval(refresh, frameRate);

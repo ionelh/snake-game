@@ -3,7 +3,7 @@ class Snake {
   #score = 0;
   #width = null;
   #height = null;
-  #position = [[0,0]];
+  #snakeBody = [[0,0]];
   #food = null;
 
   constructor(width, height) {
@@ -16,7 +16,7 @@ class Snake {
     // cells "occupied" by the snake
     // track them so that we don't generate food on a cell on which the snake is
     const snakeCellsMap = {};
-    this.#position.forEach(cell => {
+    this.#snakeBody.forEach(cell => {
       snakeCellsMap[cell[0] + '-' + cell[1]] = true;
     });
     let randomCell = [
@@ -38,12 +38,8 @@ class Snake {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  get position() {
-    return this.#position;
-  }
-
-  get score() {
-    return this.#score;
+  get snakeBody() {
+    return this.#snakeBody;
   }
 
   set direction(direction) {
@@ -55,11 +51,14 @@ class Snake {
   }
 
   move(direction) {
-    this.updatePosition(this.#direction);
+    const eatenCell = this.updateSnakeBody(this.#direction);
     if (this.isOutOfBounds()) return false;
     if (this.isBodyCollision()) return false;
     this.updateScore();
-    return true;
+    return {
+      eatenCell,
+      score: this.#score,
+    };
   }
 
   movePossible(direction) {
@@ -84,19 +83,20 @@ class Snake {
   }
 
   getHead() {
-      return this.#position[this.#position.length - 1];
+      return this.#snakeBody[this.#snakeBody.length - 1];
   }
 
   isBodyCollision() {
       const head = this.getHead();
-      for (let i = 0; i < this.#position.length - 1; i += 1) {
-          if (head[0] === this.#position[i][0] && head[1] === this.#position[i][1]) return true;
+      for (let i = 0; i < this.#snakeBody.length - 1; i += 1) {
+          if (head[0] === this.#snakeBody[i][0] && head[1] === this.#snakeBody[i][1]) return true;
       }
       return false;
   }
 
-  updatePosition(direction) {
-      const nextCell = [...this.#position[this.#position.length - 1]];
+  // if it ate a cell after the move, returns the eaten cell. null otherwise
+  updateSnakeBody(direction) {
+      const nextCell = [...this.#snakeBody[this.#snakeBody.length - 1]];
 
       if (direction === 'D') {
           nextCell[0] += 1;
@@ -109,9 +109,13 @@ class Snake {
       }
       this.#direction = direction;
 
-      this.#position.push(nextCell);
+      this.#snakeBody.push(nextCell);
 
-      if (!this.hasFood(nextCell)) this.#position.shift();
+      if (!this.hasFood(nextCell)) {
+        this.#snakeBody.shift();
+        return null;
+      }
+      return nextCell;
   }
 
   hasFood(cell) {
