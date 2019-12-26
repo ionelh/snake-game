@@ -50,7 +50,15 @@ class Snake {
     return this.#food;
   }
 
-  move(direction) {
+  reset() {
+    this.#direction = 'R';
+    this.#score = 0;
+    this.#snakeBody = [[0,0]];
+    this.#food = null;
+    this.#food = this.getRandomCell();
+  }
+
+  move() {
     const eatenCell = this.updateSnakeBody(this.#direction);
     if (this.isOutOfBounds()) return false;
     if (this.isBodyCollision()) return false;

@@ -6,23 +6,36 @@
         leftBtn = document.querySelector('#leftBtn'),
         rightBtn = document.querySelector('#rightBtn'),
         downBtn = document.querySelector('#downBtn'),
+        resetBtn = document.querySelector('#reset-button'),
+        speedControl = document.querySelector('#speed-control'),
         ctx = canvas.getContext('2d'),
         gameW = 20,
         gameH = 20,
         snake = new Snake(gameW, gameH),
         defaultFillStyle = 'black',
         foodFillStyle = 'red',
-        frameRate = 100, // in ms
         cellSize = 20;
   let directions = [],
+      frameRate = 100, // in ms
       intervalID = null;
 
   canvas.width = gameW * cellSize;
   canvas.height = gameH * cellSize;
   contentElm.style.width = gameW * cellSize + 'px';
 
+  speedControl.value = (frameRate - 50) / 10;
+
   canvas.addEventListener('click', e => {
     start();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    reset();
+    drawInitial();
+  });
+
+  speedControl.addEventListener('change', (e) => {
+    frameRate = 160 - e.target.value * 10;
   });
 
   const drawCell = (pos, fillStyle = defaultFillStyle) => {
@@ -33,6 +46,10 @@
 
   const clearCell = cell => {
     ctx.clearRect(cell[1] * cellSize, cell[0] * cellSize, cellSize, cellSize);
+  };
+
+  const clearCanvas = () => {
+    ctx.clearRect(0, 0, cellSize * gameW, cellSize * gameH);
   };
 
   const refresh = () => {
@@ -56,11 +73,27 @@
     }
   };
 
-  drawCell(snake.snakeBody[snake.snakeBody.length - 1]);
-  drawCell(snake.foodPosition, foodFillStyle);
+  const drawInitial = () => {
+    drawCell(snake.snakeBody[snake.snakeBody.length - 1]);
+    drawCell(snake.foodPosition, foodFillStyle);
+  };
+  drawInitial();
 
   function start() {
     intervalID = setInterval(refresh, frameRate);
+  }
+
+  function pause() {
+    clearInterval(intervalID);
+  }
+
+  function reset() {
+    directions = [];
+    clearInterval(intervalID);
+    snake.reset();
+    clearCanvas();
+    drawCell(snake.snakeBody[snake.snakeBody.length - 1]);
+    drawCell(snake.foodPosition, foodFillStyle);
   }
 
   document.addEventListener('keydown', e => {
@@ -72,6 +105,8 @@
     };
     if (movesMap[e.keyCode]) {
       directions.push(movesMap[e.keyCode]);
+    } else if (e.keyCode === 32) {
+      pause();
     }
   });
 
